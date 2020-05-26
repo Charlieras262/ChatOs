@@ -1,0 +1,39 @@
+<div class="limiter">
+    <div class="container">
+        <div @enterWrap class="wrap">
+            <img @enterIcon class="pic" src="public/images/app-logo.png" alt="IMG">
+            <form class="form" (ngSubmit)="sendMessage()">
+                <span class="form-title">
+                    Chat
+                </span>
+                <div class="mesgs sub-content-txt">
+                    <div id="chat" class="msg_history">
+                    </div>
+                    <div class="wrap-input">
+                        <input class="input" id="msg" name="msg" type="textarea" placeholder="Type your Message..."
+                            [(ngModel)]="msg">
+                        <span class="focus-input"></span>
+                        <span class="symbol-input">
+                            <i class="fa fa-keyboard-o fa-lg" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <div class="container-form-btn">
+                        <button type="submit" class="main-button icon-button">
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div @enterUsers class="form">
+                Connected Users
+                <div class="center" *ngFor="let user of chatService.users">
+                    <div >
+                        <i class="fa fa-user"></i>
+                        <strong *ngIf="user == username"> {{user}} (You)</strong>
+                        <span *ngIf="user != username"> {{user}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

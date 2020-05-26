@@ -1,0 +1,26 @@
+<div class="limiter">
+  <div class="container">
+    <img @enterIcon class="pic" src="public/images/app-logo.png" alt="IMG">
+    <div  @enterWrap class="wrap" >
+      <form class="form validate-form" (ngSubmit)="onLoginUser()">
+        <span class="form-title">
+          Login
+        </span>
+
+        <div class="wrap-input">
+          <input class="input" name="username" placeholder="Username..." [(ngModel)]="username">
+          <span class="focus-input"></span>
+          <span class="symbol-input">
+            <i class="fa fa-user fa-lg" aria-hidden="true"></i>
+          </span>
+        </div>
+
+        <div class="container-form-btn">
+          <button type="submit" class="main-button icon-button">
+            Let's Chat
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

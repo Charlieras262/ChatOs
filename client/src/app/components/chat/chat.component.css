@@ -1,0 +1,51 @@
+.container {
+  width: 100%;  
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.wrap {
+  width: 900px;
+  background: #FFFFFF;
+  border-radius: 25px;
+  overflow: hidden;
+
+  transform: translateZ(0);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: space-between;
+  padding: 62px 30px 30px 30px;
+}
+
+.form {
+  width: 100%;
+}
+
+.form-title {
+  font-family: ProductSans-Medium;
+  font-size: 30px;
+  color: #9A9A9A;
+  text-align: left;
+  margin-left: 150px;
+  display: block;
+}
+
+.pic {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    max-width: 130px;
+    max-height: 130px;
+    z-index: 1;
+}
