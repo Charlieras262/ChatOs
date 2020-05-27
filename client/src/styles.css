@@ -455,8 +455,8 @@ iframe {
   }
   .messaging { padding: 0 0 50px 0;}
   .msg_history {
-    height: 500px;
-    overflow-y: auto;
+    height: 300px;
+    overflow-y: scroll;
     width: 100%;
     padding: 30px;
     border-radius: 25px;

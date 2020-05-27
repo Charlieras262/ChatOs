@@ -87,7 +87,11 @@ export class ChatComponent implements
     this.socket.emit('init')
     this.socket.on("usernames", users => {
       if (users.length == 0) this.authService.logout()
-      else this.chatService.users = users
+      else {
+        users = users.filter((value, index, arr) => value != this.username)
+        users.unshift(this.username)
+        this.chatService.users = users
+      }
       this.ready = true
     });
     this.socket.on('newMessage', (chat: Message) => {
@@ -99,8 +103,8 @@ export class ChatComponent implements
       }
     })
     window.onload = () => {
-      this.socket.emit('logout', this.authService.getUser())
       this.authService.logout()
+      this.socket.emit('logout', this.authService.getUser())
     }
   }
 
@@ -120,6 +124,7 @@ export class ChatComponent implements
     } else {
       this.chat.append(this.incomingMessage(this.splitString(chat.msg, 12), chat.nick, this.getDate(chat.date)))
     }
+    this.chat.animate({ scrollTop: this.chat.prop("scrollHeight")}, 1000);
   }
 
   private incomingMessage(message: string, username: string, date: string) {
@@ -164,5 +169,9 @@ export class ChatComponent implements
       joinedString += `${chunk}`
     }
     return joinedString
+  }
+
+  isCurrentUser(user){
+    return user == this.username ? "active_chat" : ""
   }
 }
