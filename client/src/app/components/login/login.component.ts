@@ -59,11 +59,11 @@ export class LoginComponent implements OnInit {
 
   onLoginUser() {
     this.chatSrv.newUser(this.username, res => {
-      if (res) {
-        this.authService.storeUserData(this.username)
+      if (res.success) {
+        this.authService.storeUserData(JSON.stringify(res.data))
         this.ngZone.run(()=>this.router.navigate(['/chat']))
       } else {
-        $.toaster("The nickname already exists.", '<i class="fa fa-times"></i>', 'info');
+        $.toaster("The nickname already exists.", '<i class="fa fa-info-circle"></i>', 'warning');
       }
     })
   }

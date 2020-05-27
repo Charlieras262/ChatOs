@@ -5,6 +5,7 @@ import { trigger, style, transition, animate } from '@angular/animations'
 import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import { Message } from 'src/app/models/Message';
+import { User } from 'src/app/models/User';
 
 declare var $: any;
 
@@ -65,64 +66,68 @@ declare var $: any;
     ])
   ]
 })
-export class ChatComponent implements
-  OnInit {
+export class ChatComponent implements OnInit {
 
   private chat;
-  username: string
   msg: string
-  ready = false
+  currentUser: User;
 
   constructor(
-    public authService: LoginService,
     public chatService: ChatService,
     public router: Router,
-    public socket: Socket
+    public socket: Socket,
+    public authService: LoginService
   ) {
   }
 
   ngOnInit(): void {
-    this.username = this.authService.getUser()
+    this.currentUser = this.authService.getUser();
     this.chat = $('#chat');
     this.socket.emit('init')
     this.socket.on("usernames", users => {
-      if (users.length == 0) this.authService.logout()
-      else {
-        users = users.filter((value, index, arr) => value != this.username)
-        users.unshift(this.username)
-        this.chatService.users = users
-      }
-      this.ready = true
+      this.chatService.setUsers(users)
     });
     this.socket.on('newMessage', (chat: Message) => {
       this.addMessage(chat)
+    })
+    this.socket.on('newPrivateMessage', (chat: Message) => {
+      this.addMessage(chat, false, true)
     })
     this.socket.on('loadOldMgs', (chats) => {
       for (const chat of chats) {
         this.addMessage(chat)
       }
     })
+    this.socket.on('unAutorized', user => {
+      $.toaster(`User "${user}" has an invalid token, it may occur when token expires or it was obtained by an illegal way.`, '<i class="fa fa-times"></i>', 'danger');
+      setTimeout(() => {this.authService.logout()}, 1000)
+    })
     window.onload = () => {
-      this.authService.logout()
-      this.socket.emit('logout', this.authService.getUser())
+      this.chatService.pageReloaded()
     }
   }
 
-  sendMessage() {
-    if (this.ready) {
-      const chat = { nick: this.username, msg: this.msg, date: new Date().toString() };
-      this.addMessage(chat, true)
-      this.socket.emit('sendMessage', chat)
-      this.msg = ""
+  sendMessage(): void {
+    if (this.chatService.isReady()) {
+      this.addMessage(this.chatService.sendMessage(this.msg), true);
+      this.msg = "";
     }
   }
 
-  private addMessage(chat: Message, updateOwner: boolean = false) {
-    if (chat.nick == this.username) {
+  sendPrivateMessage(user): void {
+    if (this.chatService.isReady()) {
+      this.addMessage(this.chatService.sendPrivateMessage(this.msg, user), true);
+      this.msg = "";
+    }
+  }
+
+  private addMessage(chat: Message, updateOwner: boolean = false, isPrivate: boolean = false) {
+    const isPrivateText = isPrivate ? "(Private)" : ""
+    if (chat.nick == this.currentUser.username) {
       if(!updateOwner) return
       this.chat.append(this.outcomingMessage(this.splitString(chat.msg, 12), this.getDate(chat.date)))
     } else {
-      this.chat.append(this.incomingMessage(this.splitString(chat.msg, 12), chat.nick, this.getDate(chat.date)))
+      this.chat.append(this.incomingMessage(this.splitString(chat.msg, 12), `${isPrivateText} ${chat.nick}`, this.getDate(chat.date)))
     }
     this.chat.animate({ scrollTop: this.chat.prop("scrollHeight")}, 1000);
   }
@@ -142,7 +147,7 @@ export class ChatComponent implements
   private outcomingMessage(message: string, date: string) {
     return `<div class="outgoing_msg">
               <div class="sent_msg">
-                <i class="fa fa-user"> <span class="received_msg_title">${this.username}</span></i>
+                <i class="fa fa-user"> <span class="received_msg_title">${this.currentUser.username}</span></i>
                 <p>${message}</p>
                 <span class="time_date"> ${date} </span>
               </div>
@@ -172,6 +177,6 @@ export class ChatComponent implements
   }
 
   isCurrentUser(user){
-    return user == this.username ? "active_chat" : ""
+    return user == this.currentUser.username ? "active_chat" : ""
   }
 }

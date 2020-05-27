@@ -28,14 +28,14 @@
                 <span class="form-sub-title">
                     Users
                 </span>
-                <div class="chat_list {{isCurrentUser(user)}}" *ngFor="let user of chatService.users">
+                <div class="chat_list {{isCurrentUser(user)}}" *ngFor="let user of chatService.getUsers()">
                     <div class="chat_people">
                         <div class="chat_img"><i class="fa fa-user-circle fa-2x"></i></div>
                         <div class="chat_ib vertical-center">
-                            <strong *ngIf="user == username"> {{user}} (You)</strong>
-                            <span *ngIf="user != username"> {{user}}</span>
+                            <strong *ngIf="user == currentUser.username"> {{user}} (You)</strong>
+                            <span *ngIf="user != currentUser.username"> {{user}}</span>
                         </div>
-                        <div class="priv-chat vertical-center"><i class="fa fa-comments-o fa-2x"></i></div>
+                        <div class="priv-chat vertical-center"><button (click)="sendPrivateMessage(user)" class="fa fa-comments-o fa-2x"></button></div>
                     </div>
                 </div>
             </div>

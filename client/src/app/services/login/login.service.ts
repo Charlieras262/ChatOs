@@ -1,35 +1,36 @@
 import { Injectable } from '@angular/core';
+import { User } from 'src/app/models/User';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
-  private username: string = ""
+  private user: User
 
   constructor() { }
 
   private loadUser() {
-    this.username = localStorage.getItem('user')
+    this.user = JSON.parse(localStorage.getItem('user'))
   }
 
   isLoggedIn(){
     this.loadUser()
-    return this.username != null
+    return this.user != null
   }
 
   storeUserData(user: string) {
     localStorage.setItem('user', user);
-    this.username = user;
+    this.user = JSON.parse(user);
   }
 
   getUser(){
     this.loadUser()
-    return this.username
+    return this.user
   }
 
   logout() {
-    this.username = null;
+    this.user = null;
     localStorage.clear();
     window.location.reload()
   }
